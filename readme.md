@@ -22,28 +22,22 @@ Embed the Gist as
 
 ##### Package manager
 
-yarn
-
-```
-yarn add vue3-q-tel-input
-```
-
 npm
 
 ```
-npm i vue3-q-tel-input
+npm i vue3-quasar-tel
 ```
 
 Import the component as
 
 ```
-import Vue3QTelInput from 'vue3-q-tel-input'
+import Vue3QTelInput from 'vue3-quasar-tel'
 ```
 
 Import the styles as
 
 ```
-import 'vue3-q-tel-input/dist/vue3-q-tel-input.esm.css'
+import 'vue3-quasar-tel/dist/vue3-quasar-tel.esm.css'
 ```
 
 ##### CDN
@@ -51,28 +45,28 @@ import 'vue3-q-tel-input/dist/vue3-q-tel-input.esm.css'
 ###### UNPKG
 
 ```
-http://unpkg.com/vue3-q-tel-input@latest/dist/vue3-q-tel-input.min.js
-http://unpkg.com/vue3-q-tel-input@latest/dist/vue3-q-tel-input.esm.css
+http://unpkg.com/vue3-quasar-tel@latest/dist/vue3-quasar-tel.min.js
+http://unpkg.com/vue3-quasar-tel@latest/dist/vue3-quasar-tel.esm.css
 ```
 
 ###### JSDELIVR
 
 ```
-https://cdn.jsdelivr.net/npm/vue3-q-tel-input@latest/dist/vue3-q-tel-input.min.js
-https://cdn.jsdelivr.net/npm/vue3-q-tel-input@latest/dist/vue3-q-tel-input.esm.css
+https://cdn.jsdelivr.net/npm/vue3-quasar-tel@latest/dist/vue3-quasar-tel.min.js
+https://cdn.jsdelivr.net/npm/vue3-quasar-tel@latest/dist/vue3-quasar-tel.esm.css
 ```
 
 #### Usage
 
 ```
-<vue3-q-tel-input v-model:tel="tel" />
+<vue3-quasar-tel v-model:tel="tel" />
 ```
 
 All the props that are supported in [quasr input](https://quasar.dev/vue-components/input) field are available in the plugin as well.
 _example_
 
 ```
-<vue3-q-tel-input v-model:tel="tel" dense outlined />
+<vue3-quasar-tel v-model:tel="tel" dense outlined />
 ```
 
 #### Model

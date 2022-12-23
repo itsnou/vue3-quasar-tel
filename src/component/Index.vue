@@ -56,6 +56,7 @@ export default defineComponent({
       immediate: true,
       handler() {
         this.setPhone();
+        console.log('esto',this.tel)
       },
     },
     defaultCountry: {
@@ -106,6 +107,7 @@ export default defineComponent({
     },
     phoneChanged(val: string | number | null) {
       val = val === null ? '' : val.toString();
+      console.log(val);
       let phone: PhoneNumber | undefined;
       try {
         phone = phoneNumberUtil.parse(val.trim(), this.country.iso2);
@@ -116,15 +118,16 @@ export default defineComponent({
       if (filtered_val.length > 2 && filtered_val.indexOf('+') === 0) {
         // some country code is in action
         const country = getCountryByDialCode(filtered_val);
+        console.log(country);
         if (country) {
           this.country = country;
           this.countryChanged(filtered_val.replace(`+${country.dialCode}`, ''));
         }
       }
       const num = phone ? this.getNumber(phone) : val;
-      this.prev_value = phone && phoneNumberUtil.isValidNumberForRegion(phone, this.country.iso2) ? this.getNumber(phone) : this.prev_value;
+      this.prev_value = phone && phoneNumberUtil.isValidNumberForRegion(phone, this.country.iso2) ? this.getNumber(phone) : this.prev_value;//nos chupa un huevo
       if (num.replace(/ /g, '').length > this.prev_value.replace(/ /g, '').length) return this.setPhone(); // no need to update as its not valid
-      this.$emit('update:tel', phone ? phoneNumberUtil.format(phone, PhoneNumberFormat.INTERNATIONAL) : val.trim());
+      this.$emit('update:tel', phone ? `iso:${this.country.iso2}` + phoneNumberUtil.format(phone, PhoneNumberFormat.INTERNATIONAL) : val.trim());
       this.$emit('input', phone ? phoneNumberUtil.format(phone, PhoneNumberFormat.INTERNATIONAL) : val.trim());
     },
     countryChanged(val?: string, force?: boolean) {

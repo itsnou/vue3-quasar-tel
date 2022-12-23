@@ -12,9 +12,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/CdTgr/vue3-q-tel-input.git"
+    "url": "https://github.com/itsnou/vue3-quasar-tel"
   },
-  "homepage": "https://github.com/CdTgr/vue3-q-tel-input/blob/master/readme.md",
+  "homepage": "https://github.com/itsnou/vue3-quasar-tel/blob/master/readme.md",
   "keywords": [
     "vue3",
     "vue-3",

@@ -15,7 +15,7 @@
   >
     <template v-slot:option="scope">
       <div class="flex items-center q-pa-xs mdi-border-bottom no-wrap" v-bind="scope.itemProps">
-        <span :class="!useIcon ? ['v3q_tel__flag', scope.opt.iso2.toLowerCase()] : 'q-mr-sm'">{{ useIcon ? scope.opt.emoji : '' }}</span>
+        <span :class="!useIcon ? ['v3q_tel__flag', scope.opt.iso2.toLowerCase()] : 'q-mr-sm'">{{ scope.opt.emoji }}</span>
         <span class="q-ml-sm text-no-wrap">(+{{ scope.opt.dialCode }})</span>
         <span class="q-ml-sm text-no-wrap ellipsis">{{ scope.opt.name }}</span>
       </div>
@@ -58,7 +58,7 @@ export default defineComponent({
   props: {
     country: { type: Object as PropType<Country>, required: true },
     searchText: { type: String, default: () => 'Search' },
-    useIcon: { type: Boolean, default: () => false },
+    useIcon: { type: Boolean, default: () => true },
   },
   emits: ['countryChanged', 'update:country'],
   watch: {
@@ -95,7 +95,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-@import '../styles/flags';
+@import '../styles/flags.css';
 .v3-q-tel-input--country {
   .q-field__control {
     background: none !important;

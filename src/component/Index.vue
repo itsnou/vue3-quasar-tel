@@ -1,5 +1,5 @@
 <template>
-  <q-input :error="has_error" :model-value="number" class="vue3-q-tel-input no-inherit-feedback" @update:model-value="phoneChanged" :maxlength="prev_value.length" :v-bind="$props">
+  <q-input :error="has_error" :model-value="number.valor" class="vue3-q-tel-input no-inherit-feedback" @update:model-value="phoneChanged" :maxlength="prev_value.length" :v-bind="$props">
     <template #prepend>
       <CountrySelection :use-icon="useIcon" :search-text="searchText" v-model:country="country" @countryChanged="countryChanged()" v-bind="dropdownOptions" class="no-border-field-before no-padding-field font-reduced-input-adon" />
     </template>
@@ -23,7 +23,7 @@ export default defineComponent({
     QInput,
   },
   props: {
-    tel: { type: [String, Number], default: () => '' },
+    tel: { type: Object, default: () => {}},
     required: { type: Boolean, default: () => false },
     searchText: { type: String, default: () => 'Search' },
     dropdownOptions: { type: Object, default: () => ({}) },
@@ -35,7 +35,7 @@ export default defineComponent({
   setup() {
     const country: Ref<Country> = ref(getDefault() as Country);
     const old_country: Ref<Country | undefined> = ref(undefined);
-    const number: Ref<string> = ref('');
+    const number: Ref<Object | any> = ref({iso:"", valor:""});
     const has_error: Ref<boolean> = ref(false);
     const prev_value: Ref<string> = ref('01234567890123456789');
     const phone_number: Ref<PhoneNumber | undefined> = ref(undefined);
@@ -56,7 +56,6 @@ export default defineComponent({
       immediate: true,
       handler() {
         this.setPhone();
-        console.log('esto',this.tel)
       },
     },
     defaultCountry: {
@@ -85,29 +84,30 @@ export default defineComponent({
     },
     setPhone() {
       let country = this.country;
-      if (this.tel.toString() !== '') {
-        const inCountry = getCountryCodeFromPhoneNumber(this.tel.toString());
-        if (inCountry && this.country.iso2 !== inCountry.iso2) {
-          country = inCountry;
-          this.$nextTick(() => {
-            this.country = country;
-          });
+      if(this.tel.valor){
+        if (this.tel.valor.toString() !== '') {
+          const inCountry = getCountryCodeFromPhoneNumber(this.tel.valor.toString());
+          if (inCountry && this.country.iso2 !== inCountry.iso2) {
+            country = inCountry;
+            this.$nextTick(() => {
+              this.country = country;
+            });
+          }
         }
-      }
-      try {
-        this.phone_number = phoneNumberUtil.parse(this.tel.toString().trim(), country.iso2);
-        this.number = this.getNumber(this.phone_number);
-        this.has_error = !phoneNumberUtil.isValidNumberForRegion(this.phone_number, country.iso2);
-      } catch (e) {
-        this.phone_number = undefined;
-        this.has_error = this.eagerValidate ? (this.tel.toString().trim() === '' ? this.required : true) : false;
-        this.number = this.tel.toString().trim();
+        try {
+          this.phone_number = phoneNumberUtil.parse(this.tel.valor.toString().trim(), country.iso2);
+          this.number.valor = this.getNumber(this.phone_number);
+          this.has_error = !phoneNumberUtil.isValidNumberForRegion(this.phone_number, country.iso2);
+        } catch (e) {
+          this.phone_number = undefined;
+          this.has_error = this.eagerValidate ? (this.tel.valor.toString().trim() === '' ? this.required : true) : false;
+          this.number.valor = this.tel.valor?.toString().trim();
+        }
       }
       this.$emit('error', this.has_error);
     },
     phoneChanged(val: string | number | null) {
       val = val === null ? '' : val.toString();
-      console.log(val);
       let phone: PhoneNumber | undefined;
       try {
         phone = phoneNumberUtil.parse(val.trim(), this.country.iso2);
@@ -118,23 +118,32 @@ export default defineComponent({
       if (filtered_val.length > 2 && filtered_val.indexOf('+') === 0) {
         // some country code is in action
         const country = getCountryByDialCode(filtered_val);
-        console.log(country);
         if (country) {
           this.country = country;
-          this.countryChanged(filtered_val.replace(`+${country.dialCode}`, ''));
         }
       }
       const num = phone ? this.getNumber(phone) : val;
       this.prev_value = phone && phoneNumberUtil.isValidNumberForRegion(phone, this.country.iso2) ? this.getNumber(phone) : this.prev_value;//nos chupa un huevo
+
       if (num.replace(/ /g, '').length > this.prev_value.replace(/ /g, '').length) return this.setPhone(); // no need to update as its not valid
-      this.$emit('update:tel', phone ? `iso:${this.country.iso2}` + phoneNumberUtil.format(phone, PhoneNumberFormat.INTERNATIONAL) : val.trim());
-      this.$emit('input', phone ? phoneNumberUtil.format(phone, PhoneNumberFormat.INTERNATIONAL) : val.trim());
+      this.$emit('update:tel', phone ? {iso: this.country.iso2 , valor: phoneNumberUtil.format(phone, PhoneNumberFormat.INTERNATIONAL) } : {
+        iso:"",
+        valor: ""
+      });
+      this.$emit('input', phone ? { iso: this.country.iso2 , valor: phoneNumberUtil.format(phone, PhoneNumberFormat.INTERNATIONAL) } : {
+        iso:"",
+        valor: ""
+      });
     },
-    countryChanged(val?: string, force?: boolean) {
+    countryChanged() {
       this.prev_value = '01234567890123456789';
-      const value = ((force ? val : (val || this.tel).toString()) || '').trim();
-      this.phoneChanged(this.old_country ? value.replace(`+${this.old_country.dialCode}`, `+${this.country.dialCode}`) : value);
-      this.setPhone();
+      const value = {
+        iso: this.country.iso2,
+        valor: "",
+      }
+      this.number = value;
+      this.phoneChanged(this.old_country ? value.valor.replace(`+${this.old_country.dialCode}`, `+${this.country.dialCode}`) : value.valor);
+      // this.setPhone();
     },
   },
 });

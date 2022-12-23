@@ -5,12 +5,13 @@
         <vue3-q-tel-input v-model:tel="input" searchText="Search using code/country" dense filled default-country="ar" />
       </div>
     </div>
-    <div>entered telephone number : {{ input }}</div>
+    <div>entered telephone number : {{ input.iso }}</div>
+    <div>entered telephone number : {{ input.valor }}</div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
 import Vue3QTelInput from '@/component/Index.vue';
 
 export default defineComponent({
@@ -18,10 +19,15 @@ export default defineComponent({
   components: {
     Vue3QTelInput,
   },
-  data() {
+  setup() {
+    const input= ref({
+      iso: "",
+      valor: ""
+    })
+
     return {
-      input: '',
-    };
-  },
+      input
+    }
+  }
 });
 </script>

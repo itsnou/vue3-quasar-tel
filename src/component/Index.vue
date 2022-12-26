@@ -35,7 +35,7 @@ export default defineComponent({
   setup() {
     const country: Ref<Country> = ref(getDefault() as Country);
     const old_country: Ref<Country | undefined> = ref(undefined);
-    const number: Ref<Object | any> = ref({iso:"", valor:""});
+    const number: Ref<Object | any> = ref({iso:"", valor:"", callingCode: ""});
     const has_error: Ref<boolean> = ref(false);
     const prev_value: Ref<string> = ref('01234567890123456789');
     const phone_number: Ref<PhoneNumber | undefined> = ref(undefined);
@@ -97,6 +97,7 @@ export default defineComponent({
         try {
           this.phone_number = phoneNumberUtil.parse(this.tel.valor.toString().trim(), country.iso2);
           this.number.valor = this.getNumber(this.phone_number);
+          this.number.callingCode = this.country.dialCode;
           this.has_error = !phoneNumberUtil.isValidNumberForRegion(this.phone_number, country.iso2);
         } catch (e) {
           this.phone_number = undefined;
@@ -123,21 +124,24 @@ export default defineComponent({
         }
       }
       const num = phone ? this.getNumber(phone) : val;
-      this.prev_value = phone && phoneNumberUtil.isValidNumberForRegion(phone, this.country.iso2) ? this.getNumber(phone) : this.prev_value;//nos chupa un huevo
+      this.prev_value = phone && phoneNumberUtil.isValidNumberForRegion(phone, this.country.iso2) ? this.getNumber(phone) : this.prev_value;//nos da igual
 
       if (num.replace(/ /g, '').length > this.prev_value.replace(/ /g, '').length) return this.setPhone(); // no need to update as its not valid
-      this.$emit('update:tel', phone ? {iso: this.country.iso2 , valor: phoneNumberUtil.format(phone, PhoneNumberFormat.INTERNATIONAL) } : {
+      this.$emit('update:tel', phone ? {iso: this.country.iso2, callingCode: this.country.dialCode, valor: phoneNumberUtil.format(phone, PhoneNumberFormat.INTERNATIONAL) } : {
         iso:"",
-        valor: ""
+        valor: "",
+        callingCode: ""
       });
-      this.$emit('input', phone ? { iso: this.country.iso2 , valor: phoneNumberUtil.format(phone, PhoneNumberFormat.INTERNATIONAL) } : {
+      this.$emit('input', phone ? { iso: this.country.iso2, callingCode: this.country.dialCode, valor: phoneNumberUtil.format(phone, PhoneNumberFormat.INTERNATIONAL) } : {
         iso:"",
-        valor: ""
+        valor: "",
+        callingCode: ""
       });
     },
     countryChanged() {
       this.prev_value = '01234567890123456789';
       const value = {
+        callingCode: this.country.dialCode,
         iso: this.country.iso2,
         valor: "",
       }

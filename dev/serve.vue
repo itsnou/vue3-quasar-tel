@@ -7,6 +7,7 @@
     </div>
     <div>entered telephone number : {{ input.iso }}</div>
     <div>entered telephone number : {{ input.valor }}</div>
+    <div>entered telephone number : {{ input.callingCode }}</div>
   </div>
 </template>
 
@@ -22,7 +23,8 @@ export default defineComponent({
   setup() {
     const input= ref({
       iso: "",
-      valor: ""
+      valor: "",
+      callingCode:""
     })
 
     return {
